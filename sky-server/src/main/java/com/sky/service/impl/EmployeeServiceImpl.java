@@ -111,4 +111,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return new PageResult(total,records);
     }
+
+    /*
+    启用禁用
+     */
+    public void startOrStop(Integer status, Long id) {
+        //update employee set statue=? where id=?
+
+//        //构造实体
+//        Employee employee=new Employee();
+//        employee.setStatus(status);
+//        employee.setId(id);
+        //构造实体的第二种方法
+        Employee employee=Employee.builder()
+                .status(status)
+                .id(id)
+                .build();
+
+        employeeMapper.update(employee);//公用updat方法来做所有的更新操作，而不仅仅是设计一个update_for_status
+
+    }
 }
