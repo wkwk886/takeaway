@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 @Slf4j
 public class AliOssUtil {
 
+    //阿里oss工具类
     private String endpoint;
     private String accessKeyId;
     private String accessKeySecret;
@@ -26,6 +27,7 @@ public class AliOssUtil {
      * @param objectName
      * @return
      */
+    //upload返回图片网址
     public String upload(byte[] bytes, String objectName) {
 
         // 创建OSSClient实例。
