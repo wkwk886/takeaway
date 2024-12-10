@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SetmealDishMapper">
+
+    <!--动态SQL根据传入的dish id找套餐id-->
+    <select id="getSetmealIdsByDishIds" resultType="java.lang.Long">
+        select setmeal_id from setmeal_dish where dish_id in
+        <foreach collection="dishIds" item="dishId" separator="," open="(" close=")">
+            #{dishId} <!--WHERE dish_id = #{dishId}，遍历之后把每次的dishId取出来，给第八行-->
+        </foreach>
+    </select>
+</mapper>
