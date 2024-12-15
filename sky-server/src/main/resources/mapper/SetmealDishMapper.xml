@@ -10,4 +10,18 @@
             #{dishId} <!--WHERE dish_id = #{dishId}，遍历之后把每次的dishId取出来，给第八行-->
         </foreach>
     </select>
+
+    <!--
+    动态SQL
+    批量插入菜品-套餐对应数据
+    -->
+    <insert id="insertBatch" parameterType="list">
+        insert into setmeal_dish (setmeal_id, dish_id, name, price, copies)
+        VALUES
+        <foreach collection="setmealDishes" item="sd" separator=",">
+            (#{sd.setmealId},#{sd.dishId},#{sd.name},#{sd.price},#{sd.copies})
+        </foreach>
+    </insert>
+
+
 </mapper>

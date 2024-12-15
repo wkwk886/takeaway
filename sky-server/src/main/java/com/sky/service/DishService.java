@@ -2,6 +2,7 @@ package com.sky.service;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.vo.DishVO;
 import org.springframework.context.annotation.Bean;
@@ -41,4 +42,9 @@ public interface DishService {
     起售停售
      */
     void startOrStop(Integer status, Long id);
+
+     /*
+     根据分类id查找菜品
+      */
+     List<Dish> list(Long categoryId);
 }

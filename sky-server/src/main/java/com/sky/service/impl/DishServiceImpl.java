@@ -179,4 +179,17 @@ public class DishServiceImpl implements DishService {
 
     }
 
+    /*
+     根据分类id查找菜品
+      */
+    public List<Dish> list(Long categoryId) {
+        //构造实体来传参
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .build();
+        return dishMapper.list(dish);
+
+    }
+
 }
