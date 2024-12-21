@@ -12,9 +12,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /*
 菜品管理
@@ -26,6 +28,8 @@ import java.util.List;
 public class DishController {
     @Autowired
     private DishService dishService;
+    @Autowired
+    private RedisTemplate redisTemplate;
     /*
     新增菜品
      */
@@ -34,6 +38,10 @@ public class DishController {
     public Result save(@RequestBody DishDTO dishDTO) {//@RequestBody 把json形式的dishDTO转成query
         log.info("新增菜品：{}",dishDTO);
         dishService.saveWithFlavor(dishDTO);//传入数据
+
+        //清理redis缓存数据
+        String key="dish_"+dishDTO.getCategoryId();
+        cleanCash(key);
         return Result.success();
     }
 
@@ -49,13 +57,17 @@ public class DishController {
     }
 
     /*
-    删除菜品
+    批量删除菜品
      */
     @DeleteMapping
     @ApiOperation("批量删除菜品")
     public Result delete(@RequestParam List<Long> ids){//@RequestParam：从 HTTP 请求中提取查询参数、表单参数或 URL 参数，并将其绑定到控制器方法的参数中
         log.info("批量删除菜品：{}",ids);
         dishService.deleteBatch(ids);
+
+        //清理redis缓存数据
+        //暴力清理所有以dish_开头的key
+        cleanCash("dish_*");
         return Result.success();
     }
 
@@ -79,6 +91,9 @@ public class DishController {
     public Result upadte(@RequestBody DishDTO dishDTO){
         log.info("修改菜品：{}",dishDTO);
         dishService.updateWithFlavor(dishDTO);
+
+        //暴力清理所有以dish_开头的key
+        cleanCash("dish_*");
         return Result.success();
     }
 
@@ -90,6 +105,8 @@ public class DishController {
     public Result<String> startOrStop(@PathVariable Integer status,Long id){
         log.info("起售停售菜品：{}",id);
         dishService.startOrStop(status,id);
+        //暴力清理所有以dish_开头的key
+        cleanCash("dish_*");
         return Result.success();
 
     }
@@ -103,6 +120,14 @@ public class DishController {
         log.info("查找菜品：{}",categoryId);
         List<Dish> list=dishService.list(categoryId);
         return Result.success(list);
+    }
+
+    /*
+    统一清理缓存的方法
+     */
+    private void cleanCash(String pattern){
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 
 
