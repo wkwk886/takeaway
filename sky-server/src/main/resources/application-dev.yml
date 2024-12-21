@@ -11,3 +11,10 @@ sky:
     access-key-id: LTAI5tFRBHsh8XavG3UKY7oc
     access-key-secret: 03sxV544qyo8efoyu20nugeuuJjp1q
     bucket-name: take-away-sierra
+  redis:
+    host: localhost
+    port: 6379
+    database: 10
+  wechat:
+    appid: wxaab1d8aabb112f2d
+    secret: 76753d972d79ca746ed5691478b9b0f1

@@ -59,4 +59,9 @@ public interface DishMapper {
      根据分类id查找菜品
       */
     List<Dish> list(Dish dish);
+
+    /*
+    根据套餐查找菜品
+     */
+    List<Dish> getBySetmealId(Long setmealId);
 }

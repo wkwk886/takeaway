@@ -60,6 +60,13 @@
         order by create_time desc
     </select>
 
+    <select id="getBySetmealId" resultType="com.sky.entity.Dish">
+        select d.*
+        from dish as d
+        join setmeal_dish as sd
+        on d.id=sd.setmeal_id
+        where sd.id=#{setmealId}
+    </select>
 
 
 </mapper>

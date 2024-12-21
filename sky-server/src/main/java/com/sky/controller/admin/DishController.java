@@ -64,6 +64,7 @@ public class DishController {
      */
     @GetMapping("/{id}")
     @ApiOperation("根据菜品id查询菜品")
+    //@PathVariable:springMVC自动解析传入的字符串，以逗号分割，转成列表
     public Result<DishVO> getById(@PathVariable Long id) {
         log.info("根据id查询菜品：{}",id);
         DishVO dishVO=dishService.getByIdWithFlavor(id);
