@@ -45,4 +45,20 @@ public class ShoppingCartController {
     /*
     清空购物车
      */
+    @DeleteMapping("/clean")
+    @ApiOperation("清空购物车")
+    public Result clean(){
+        shoppingCartService.cleanShoppingCart();
+        return Result.success();
+    }
+
+    /*
+    删除一条购物车数据
+     */
+    @PostMapping("/sub")
+    @ApiOperation("删除一条购物车数据")
+    public Result sub(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        shoppingCartService.subShoppingCart(shoppingCartDTO);
+        return Result.success();
+    }
 }
