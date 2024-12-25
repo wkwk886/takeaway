@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -214,5 +215,60 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orders, orderVO);
         orderVO.setOrderDetailList(orderDetailList);
         return orderVO;
+    }
+
+    /*
+    用户取消订单
+     */
+    public void userCancelById(Long id) {
+        //根据id查询当前订单，获取数据库中的原始对象
+        Orders ordersDB = orderMapper.getById(id);
+        //校验订单是否存在，核对订单状态
+        if(ordersDB==null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        //订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消
+        if(ordersDB.getStatus()>2) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        //建立一个新orders，用于赋值给数据库修改status等信息，这样可以避免直接修改db
+        Orders orders = new Orders();
+        orders.setId(ordersDB.getId());
+
+        //修改数据库
+        if(ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+            //调用微信退款接口
+            //修改status
+            orders.setPayStatus(Orders.REFUND);
+        }
+        //更新数据库
+        orders.setStatus(Orders.CANCELLED);
+        orders.setCancelTime(LocalDateTime.now());
+        orders.setCancelReason("用户取消");
+        orderMapper.update(orders);
+    }
+
+    /*
+    再来一单
+     */
+    public void repetition(Long id) {
+        //获取用户id
+        Long userId=BaseContext.getCurrentId();
+        //根据订单id获取订单详情
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        //将订单详情转为购物车对象,并添加到购物车中
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x -> {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            //订单详情复制到购物车对象中
+            BeanUtils.copyProperties(x, shoppingCart, "id");
+            //设置购物车数据
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+
+            return shoppingCart;
+        }).collect(Collectors.toList());
+        //将购物车数据添加到数据库
+        shoppingCartMapper.insertBatch(shoppingCartList);
     }
 }
