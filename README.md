@@ -1,0 +1,1 @@
+This is a takeaway delivery platform for urban residents, which aims to improve the user's takeaway ordering experience through an efficient delivery system and intelligent recommendation algorithm. The project includes both user-side and merchant-side functions, enabling core functions such as order management, payment processing, and real-time delivery tracking.
